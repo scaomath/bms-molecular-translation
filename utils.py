@@ -1,18 +1,19 @@
 import gc
 import os
 import sys
-def add_sys_path():
-    try:
-        for f in ['/home/scao/anaconda3/lib/python3.8/lib-dynload',
-                 '/home/scao/anaconda3/lib/python3.8/site-packages']:
-            sys.path.append(f)
-    except:
-        RuntimeError
-        print("Path not added")
-add_sys_path()
+
+# def add_sys_path():
+#     try:
+#         for f in ['/home/scao/anaconda3/lib/python3.8/lib-dynload',
+#                  '/home/scao/anaconda3/lib/python3.8/site-packages']:
+#             sys.path.append(f)
+#     except:
+#         RuntimeError
+#         print("Path not added")
+# add_sys_path()
 
 
-os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+# os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import math
 import pickle
@@ -23,15 +24,18 @@ from contextlib import contextmanager
 from datetime import date
 from time import time
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import psutil
+import psutil, platform, subprocess, re
 import torch
-import torch.nn as nn
-
 from sklearn.metrics import roc_auc_score
+
+import ctypes
+import ctypes.util
+
+libc = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
+libc.mount.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong, ctypes.c_char_p)
 
 ##########################################################################
 from IPython import get_ipython
@@ -81,10 +85,26 @@ def get_file_size(filename):
     file_size = os.stat(filename)
     return get_size(file_size.st_size)
 
+import os, platform, subprocess, re
+
+def get_processor_name():
+    if platform.system() == "Windows":
+        return platform.processor()
+    elif platform.system() == "Darwin":
+        os.environ['PATH'] = os.environ['PATH'] + os.pathsep + '/usr/sbin'
+        command ="sysctl -n machdep.cpu.brand_string"
+        return subprocess.check_output(command).strip()
+    elif platform.system() == "Linux":
+        command = "cat /proc/cpuinfo"
+        all_info = subprocess.check_output(command, shell=True).strip()
+        for line in all_info.decode("utf-8").split("\n"):
+            if "model name" in line:
+                return re.sub(".*model name.*:", "", line, 1)
 
 def get_system():
     print("="*40, "CPU Info", "="*40)
     # number of cores
+    print("Device name       :", get_processor_name())
     print("Physical cores    :", psutil.cpu_count(logical=False))
     print("Total cores       :", psutil.cpu_count(logical=True))
     # CPU frequencies
@@ -110,15 +130,14 @@ def get_system():
    
     if device.type == 'cuda':
         print("="*40, "GPU Info", "="*40)
-        print(f'Device     : {device}')
-        print(torch.cuda.get_device_name(0))
+        print(f'Device     : {torch.cuda.get_device_name(0)}')
         print(f"{'Mem total': <15}: {round(torch.cuda.get_device_properties(0).total_memory/1024**3,1)} GB")
         print(f"{'Mem allocated': <15}: {round(torch.cuda.memory_allocated(0)/1024**3,1)} GB")
         print(f"{'Mem cached': <15}: {round(torch.cuda.memory_reserved(0)/1024**3,1)} GB")
     
     print("="*30, "system info print done", "="*30)
 
-def get_seed(s):
+def get_seed(s, printout=True):
     rd.seed(s)
     os.environ['PYTHONHASHSEED'] = str(s)
     np.random.seed(s)
@@ -131,6 +150,25 @@ def get_seed(s):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(s)
 
+    message = f'''
+    random.seed({s})
+    os.environ['PYTHONHASHSEED'] = str({s})
+    numpy.random.seed({s})
+    pandas.core.common.random_state({s})
+    torch.manual_seed({s})
+    torch.cuda.manual_seed({s})
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all({s})
+    '''
+    if printout:
+        print("\n")    
+        print(f"The following code snippets have been run." )
+        print("="*50)
+        print(message)
+        print("="*50)
+
 @contextmanager
 def simple_timer(title):
     t0 = time()
@@ -141,11 +179,11 @@ class Colors:
     """Defining Color Codes to color the text displayed on terminal.
     """
 
-    blue = "\033[94m"
+    red = "\033[91m"
     green = "\033[92m"
     yellow = "\033[93m"
+    blue = "\033[94m"
     magenta = "\033[95m"
-    red = "\033[91m"
     end = "\033[0m"
 
 def color(string: str, color: Colors = Colors.yellow) -> str:
@@ -231,6 +269,15 @@ def roc_auc_compute_fn(y_targets, y_preds):
     y_pred = y_preds.cpu().numpy()
     return roc_auc_score(y_true, y_pred)
 
+def multiclass_accuracy(preds, targets):
+    '''
+    preds: (N_batch, N_class)
+    targets: (N_batch, )
+    '''
+    if preds.ndim > 1 and preds.size(-1) > 1:
+        preds=preds.argmax(axis=-1)
+    return (preds==targets).float().mean()
+
 def argmax(lst):
   return lst.index(max(lst))
 
@@ -276,17 +323,29 @@ def load_pickle(load_path):
         u = pickle.load(f)
     return u
 
-def clones(module, N):
-    '''
-    Input:
-        - module: nn.Module obj
-    Output:
-        - zip identical N layers (not stacking)
+class DotDict(dict):
+    """
+    https://stackoverflow.com/a/23689767/622119
+    https://stackoverflow.com/a/36968114/622119
+    dot.notation access to dictionary attributes
+    """
+    def __getattr__(self, attr):
+        return self.get(attr)
+    __setattr__= dict.__setitem__
+    __delattr__= dict.__delitem__
 
-    Refs:
-        - https://nlp.seas.harvard.edu/2018/04/03/attention.html
-    '''
-    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
+    def __getstate__(self):
+        return self
+
+    def __setstate__(self, state):
+        self.update(state)
+        self.__dict__ = self
+
+def mount(source, target, fs, options=''):
+  ret = libc.mount(source.encode(), target.encode(), fs.encode(), 0, options.encode())
+  if ret < 0:
+    errno = ctypes.get_errno()
+    raise OSError(errno, f"Error mounting {source} ({fs}) on {target} with options '{options}': {os.strerror(errno)}")
 
 
 if __name__ == "__main__":
