@@ -1,2 +1,2 @@
-# hpa-single-cell-classification
-Human Protein Atlas - Find individual human cell differences in microscope images
+# Bristol-Myers Squibb – Molecular Translation
+https://www.kaggle.com/c/bms-molecular-translation
