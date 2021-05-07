@@ -21,6 +21,12 @@ is_mixed_precision = True #False  #
 #%%
 ###################################################################################################
 import torch.cuda.amp as amp
+
+def get_num_params(model):
+    model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+    params = sum([np.prod(p.size()) for p in model_parameters])
+    return params
+
 if is_mixed_precision:
     class AmpNet(Net):
         @torch.cuda.amp.autocast()
@@ -30,7 +36,7 @@ else:
     AmpNet = Net
 
 
-
+#%%
 
 ###################################################################################################
 
@@ -105,7 +111,7 @@ def run_train():
     out_dir = \
         '/home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
     initial_checkpoint = \
-      out_dir + '/checkpoint/00755000_model.pth'#None #
+      out_dir + '/checkpoint/00922000_model.pth'#None #
        #'/root/share1/kaggle/2021/bms-moleular-translation/result/try22/tnt-patch1/fold3/checkpoint/00697000_model.pth'
 
     debug = 0
@@ -165,7 +171,7 @@ def run_train():
     log.write('** net setting **\n')
     scaler = amp.GradScaler()
     net = AmpNet().cuda()
-
+    print(f"Total params: {get_num_params(net)}")
 
     if initial_checkpoint is not None:
         f = torch.load(initial_checkpoint, map_location=lambda storage, loc: storage)

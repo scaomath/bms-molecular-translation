@@ -1,3 +1,9 @@
+#%%
+import os, sys
+current_path = os.path.dirname(os.path.abspath(__file__))
+HOME = os.path.dirname(current_path)
+sys.path.append(HOME)
+
 from common import *
 from configure import *
 from bms import *
@@ -10,7 +16,7 @@ from timm.models.vision_transformer import Mlp
 from timm.models.layers import DropPath, trunc_normal_
 #from timm.models.tnt import *
 
-
+#%%
 
 class Attention(nn.Module):
     """ Multi-Head Attention
