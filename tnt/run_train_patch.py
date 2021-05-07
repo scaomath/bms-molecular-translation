@@ -4,6 +4,7 @@ import sys
 current_path = os.path.dirname(os.path.abspath(__file__))
 HOME = os.path.dirname(current_path)
 sys.path.append(HOME)
+sys.path.append(current_path)
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 from common import *

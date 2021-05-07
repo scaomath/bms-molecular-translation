@@ -3,7 +3,7 @@ import os, sys
 current_path = os.path.dirname(os.path.abspath(__file__))
 HOME = os.path.dirname(current_path)
 sys.path.append(HOME)
-
+sys.path.append(current_path)
 from common import *
 from configure import *
 from bms import *

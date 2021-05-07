@@ -62,38 +62,38 @@ class Net(nn.Module):
         logit[:,:max_of_length]=l
         return logit
 
-    #submit function has not been coded. i will leave it as an exercise for the kaggler
-    #@torch.jit.export
+    # submit function has not been coded. i will leave it as an exercise for the kaggler
+    # @torch.jit.export
     # def forward_argmax_decode(self, patch, coord, mask):
-    #
+    
     #     image_dim   = 384
     #     text_dim    = 384
     #     decoder_dim = 384
     #     num_layer = 3
     #     num_head  = 8
     #     ff_dim    = 1024
-    #
+    
     #     STOI = {
     #         '<sos>': 190,
     #         '<eos>': 191,
     #         '<pad>': 192,
     #     }
     #     max_length = 278 # 275
-    #
-    #
+    
+    
     #     #---------------------------------
     #     device = patch.device
     #     batch_size = len(patch)
-    #
+    
     #     patch = patch*2-1
     #     image_embed = self.cnn(patch, coord, mask)
     #     image_embed = self.image_encode(image_embed).permute(1,0,2).contiguous()
-    #
+    
     #     token = torch.full((batch_size, max_length), STOI['<pad>'],dtype=torch.long, device=device)
     #     text_pos = self.text_pos.pos
     #     token[:,0] = STOI['<sos>']
-    #
-    #
+    
+    
     #     #-------------------------------------
     #     eos = STOI['<eos>']
     #     pad = STOI['<pad>']
@@ -115,7 +115,7 @@ class Net(nn.Module):
     #     #         k = torch.argmax(l, -1)  # predict max
     #     #         token[:, t+1] = k
     #     #         if ((k == eos) | (k == pad)).all():  break
-    #
+    
     #     # fast version
     #     if 1:
     #         #incremental_state = {}
@@ -127,21 +127,21 @@ class Net(nn.Module):
     #             #last_token = token [:,:(t+1)]
     #             #text_embed = self.token_embed(last_token)
     #             #text_embed = self.text_pos(text_embed) #text_embed + text_pos[:,:(t+1)] #
-    #
+    
     #             last_token = token[:, t]
     #             text_embed = self.token_embed(last_token)
     #             text_embed = text_embed + text_pos[:,t] #
     #             text_embed = text_embed.reshape(1,batch_size,text_dim)
-    #
+    
     #             x = self.text_decode.forward_one(text_embed, image_embed, incremental_state)
     #             x = x.reshape(batch_size,decoder_dim)
     #             #print(incremental_state.keys())
-    #
+    
     #             l = self.logit(x)
     #             k = torch.argmax(l, -1)  # predict max
     #             token[:, t+1] = k
     #             if ((k == eos) | (k == pad)).all():  break
-    #
+    
     #     predict = token[:, 1:]
     #     return predict
 

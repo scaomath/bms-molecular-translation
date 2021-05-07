@@ -336,3 +336,80 @@ Parameter Group 0
 rate     iter   epoch | loss  lb(lev) | loss0  loss1  | time          
 ----------------------------------------------------------------------
 0.00000  92.2000* 33.86  | 0.007   1.28  | 0.000  0.000  0.000  |  0 hr 00 min
+
+--- [START 2021-05-07_15-42-52] ----------------------------------------------------------------
+
+	@common.py:  
+	pytorch
+		seed = 1620420173
+		torch.__version__              = 1.8.0
+		torch.version.cuda             = 11.1
+		torch.backends.cudnn.version() = 8005
+		os['CUDA_VISIBLE_DEVICES']     = 0
+		torch.cuda.device_count()      = 1
+		torch.cuda.get_device_properties() = (name='GeForce RTX 3090', major=8, minor=6, total_memory=24268MB, multi_processor_count=82)
+
+
+	__file__ = /home/scao/Documents/bms-molecular-translation/tnt/run_train_patch.py
+	out_dir  = /home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold3
+
+train_dataset : 
+	len = 2383782
+	df  = (2383782, 12)
+	length distribution
+		  20 =        0 (0.0000)
+		  40 =     1467 (0.0006)
+		  60 =   163512 (0.0686)
+		  80 =   754403 (0.3165)
+		 100 =   720141 (0.3021)
+		 120 =   485601 (0.2037)
+		 140 =   183232 (0.0769)
+		 160 =    56892 (0.0239)
+		 180 =    13030 (0.0055)
+		 200 =     2777 (0.0012)
+		 220 =     1402 (0.0006)
+		 240 =      917 (0.0004)
+		 260 =      372 (0.0002)
+		 280 =       36 (0.0000)
+
+valid_dataset : 
+	len = 5000
+	df  = (5000, 12)
+	length distribution
+		  20 =        0 (0.0000)
+		  40 =        3 (0.0006)
+		  60 =      366 (0.0732)
+		  80 =     1566 (0.3132)
+		 100 =     1463 (0.2926)
+		 120 =     1032 (0.2064)
+		 140 =      402 (0.0804)
+		 160 =      127 (0.0254)
+		 180 =       30 (0.0060)
+		 200 =        4 (0.0008)
+		 220 =        2 (0.0004)
+		 240 =        3 (0.0006)
+		 260 =        2 (0.0004)
+		 280 =        0 (0.0000)
+
+
+** net setting **
+	initial_checkpoint = /home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold3/checkpoint/00922000_model.pth
+
+optimizer
+  Lookahead (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1e-05
+    step_counter: 0
+    weight_decay: 0
+)
+
+** start training here! **
+   is_mixed_precision = True 
+   batch_size = 32
+   experiment = ['tnt', 'run_train_patch.py']
+                      |----- VALID ---|---- TRAIN/BATCH --------------
+rate     iter   epoch | loss  lb(lev) | loss0  loss1  | time          
+----------------------------------------------------------------------
+0.00000  92.2000* 33.86  | 0.007   1.28  | 0.000  0.000  0.000  |  0 hr 00 min
