@@ -131,3 +131,5 @@ dmypy.json
 *.csv
 *.pkl
 *.pickle
+pretrain_model/-- all are hack from timm models--
+*.pth

@@ -1,5 +1,9 @@
+#%%
 import os
-
+import sys
+current_path = os.path.dirname(os.path.abspath(__file__))
+HOME = os.path.dirname(current_path)
+sys.path.append(HOME)
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 from common import *
@@ -14,7 +18,7 @@ from fairseq_model import *
 # ----------------
 is_mixed_precision = True #False  #
 
-
+#%%
 ###################################################################################################
 import torch.cuda.amp as amp
 if is_mixed_precision:
@@ -99,7 +103,7 @@ def run_train():
 
     fold = 3
     out_dir = \
-        '/root/share1/kaggle/2021/bms-moleular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
+        '/home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
     initial_checkpoint = \
       out_dir + '/checkpoint/00755000_model.pth'#None #
        #'/root/share1/kaggle/2021/bms-moleular-translation/result/try22/tnt-patch1/fold3/checkpoint/00697000_model.pth'

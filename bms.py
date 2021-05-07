@@ -5,7 +5,7 @@ from rdkit import Chem
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
-data_dir = '/root/share1/kaggle/2021/bms-moleular-translation/data'
+data_dir = '/home/scao/Documents/bms-molecular-translation/data'
 #https://www.kaggle.com/nofreewill/normalize-your-predictions
 
 def normalize_inchi(inchi):
