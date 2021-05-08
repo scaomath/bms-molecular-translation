@@ -1,7 +1,11 @@
 from common import *
 from bms import *
-from configure import *
-from patch import *
+try:
+    from configure import *
+    from patch import *
+except:
+    from .configure import *
+    from .patch import *
 #from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
 
 #(2424186, 6)

@@ -1,13 +1,20 @@
 from common import *
-from configure import *
+try:
+    from configure import *
+except:
+    from .configure import *
 from bms import *
 
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, PackedSequence
 #https://github.com/pytorch/pytorch/issues/1788
 # https://stackoverflow.com/questions/51030782/why-do-we-pack-the-sequences-in-pytorch
 
-from fairseq_transformer import *
-from tnt_patch import *
+try:
+    from fairseq_transformer import *
+    from tnt_patch import *
+except:
+    from .fairseq_transformer import *
+    from .tnt_patch import *
 #from timm.models.tnt import *
 
 

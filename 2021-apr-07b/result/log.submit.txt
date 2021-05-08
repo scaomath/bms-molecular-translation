@@ -1,0 +1,162 @@
+ 
+
+--- [START 2021-04-09_17-55-31] ----------------------------------------------------------------
+
+is_norm_ichi = False
+
+mode : local
+valid_dataset : 
+	len = 5000
+	df  = (5000, 9)
+
+time  0 hr 01 min 
+submit_dir : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/valid/local-00235000_model1
+initial_checkpoint : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/checkpoint/00235000_model.pth
+df_submit : (5000, 2)
+          image_id                                              InChI
+0     02f2dcc8021a   InChI=1S/C4HCl5O/c5-1(3(7)8)2(6)4(9)10/h2H/b3-1-
+1     02d43848f75e  InChI=1S/C4H2ClF3N2/c5-2(1-9)3(10)4(6,7)8/h10H...
+2     024bcb75fcae  InChI=1S/C6H6BrNO2S/c1-3-4(7)11-5(8-3)6(9)10-2...
+3     02de456ebb81  InChI=1S/C5H6BBr2NO/c1-6(10)9-4(7)2-3-5(9)8/h2...
+4     00ed85943174  InChI=1S/C10H13N3/c11-7-10(8-12)9-13-5-3-1-2-4...
+...            ...                                                ...
+4995  0181cc60f672  InChI=1S/C44H62N4O10/c1-5-7-24-55-43(52)47(19-...
+4996  011bbb3e1665  InChI=1S/C72H141NO5/c1-3-5-7-9-11-13-15-17-19-...
+4997  0094015955f2  InChI=1S/C66H127N3/c1-4-7-10-13-16-19-22-25-28...
+4998  02a9c3a77a10  InChI=1S/C66H128O6/c1-4-7-10-13-16-19-22-25-28...
+4999  00fb3cb11db8  InChI=1S/C61H106O6/c1-4-7-10-13-16-19-22-25-28...
+
+[5000 rows x 2 columns]
+
+lb_score  = 2.050600
+is_norm_ichi = False
+
+
+--- [START 2021-04-09_21-00-24] ----------------------------------------------------------------
+
+is_norm_ichi = False
+
+mode : local
+valid_dataset : 
+	len = 40000
+	df  = (40000, 9)
+
+time  0 hr 14 min 
+submit_dir : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/valid/local-00235000_model1
+initial_checkpoint : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/checkpoint/00235000_model.pth
+df_submit : (40000, 2)
+           image_id                                              InChI
+0      05fe5fc5e7b4            InChI=1S/C2HCl6NP/c3-1(4)2(5)9-10(6,7)8
+1      02f2dcc8021a   InChI=1S/C4HCl5O/c5-1(3(7)8)2(6)4(9)10/h2H/b3-1-
+2      073cd3586fb9     InChI=1S/C2HF6O2/c4-1(5,6)3(10)11-2(7,8)9/h10H
+3      12e2758e7d27     InChI=1S/C4H2BrClO3/c5-1-2(6)4(8)9-3(1)7/h3,7H
+4      05ddaf60906d  InChI=1S/C8HN5/c9-1-6(2-10)8(5-13)7(3-11)4-12/h7H
+...             ...                                                ...
+39995  037bc84997c6  InChI=1S/C57H109NO5/c1-3-5-7-9-11-13-15-17-19-...
+39996  15dfd437bc58  InChI=1S/C55H90O6/c1-4-7-10-13-16-19-22-25-26-...
+39997  0d4a61953c45  InChI=1S/C61H115NO5/c1-3-5-7-9-11-13-15-17-19-...
+39998  07a9149c7168  InChI=1S/C63H119NO5/c1-3-5-7-9-11-13-15-17-19-...
+39999  00fb3cb11db8  InChI=1S/C61H106O6/c1-4-7-10-13-16-19-22-25-28...
+
+[40000 rows x 2 columns]
+
+lb_score  = 2.108500
+is_norm_ichi = False
+ 
+
+
+--- [START 2021-04-10_00-23-45] ----------------------------------------------------------------
+
+is_norm_ichi = False
+
+mode : local
+valid_dataset : 
+	len = 40000
+	df  = (40000, 9)
+
+time  0 hr 07 min 
+submit_dir : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/valid/local-00266000_model1
+initial_checkpoint : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/checkpoint/00266000_model.pth
+df_submit : (40000, 2)
+           image_id                                              InChI
+0      05fe5fc5e7b4             InChI=1S/C2Cl6NP/c3-1(4)2(5)9-10(6,7)8
+1      02f2dcc8021a         InChI=1S/C4HCl5O/c5-1(3(7)8)2(6)4(9)10/h2H
+2      073cd3586fb9     InChI=1S/C2HF6O2/c4-1(5,6)3(10)11-2(7,8)9/h10H
+3      12e2758e7d27     InChI=1S/C4H2BrClO3/c5-1-2(6)4(8)9-3(1)7/h3,7H
+4      05ddaf60906d  InChI=1S/C8HN5/c9-1-6(2-10)8(5-13)7(3-11)4-12/h7H
+...             ...                                                ...
+39995  037bc84997c6  InChI=1S/C56H105NO4/c1-3-5-7-9-11-13-15-17-19-...
+39996  15dfd437bc58  InChI=1S/C54H90O6/c1-4-7-10-13-16-19-22-25-26-...
+39997  0d4a61953c45  InChI=1S/C63H119NO5/c1-3-5-7-9-11-13-15-17-19-...
+39998  07a9149c7168  InChI=1S/C63H119NO5/c1-3-5-7-9-11-13-15-17-19-...
+39999  00fb3cb11db8  InChI=1S/C63H112O6/c1-4-7-10-13-16-19-22-25-28...
+
+[40000 rows x 2 columns]
+
+lb_score  = 1.964150
+is_norm_ichi = False
+
+
+--- [START 2021-04-10_07-26-53] ----------------------------------------------------------------
+
+is_norm_ichi = False
+
+mode : local
+valid_dataset : 
+	len = 10000
+	df  = (10000, 9)
+
+time  0 hr 02 min 
+submit_dir : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/valid/local-00298000_model-gpu0
+initial_checkpoint : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/checkpoint/00298000_model.pth
+df_submit : (10000, 2)
+          image_id                                              InChI
+0     05fe5fc5e7b4             InChI=1S/C2Cl6NP/c3-1(4)2(5)9-10(6,7)8
+1     02f2dcc8021a         InChI=1S/C4HCl5O/c5-1(3(7)8)2(6)4(9)10/h2H
+2     05ddaf60906d  InChI=1S/C8HN5/c9-1-6(2-10)8(5-13)7(3-11)4-12/h7H
+3     05bbe3624e35  InChI=1S/C4H6Br3OP/c1-3(9(6)7)4(5)8-2/h1-2H3/b...
+4     0413141b9e46  InChI=1S/C6H9F5O/c1-4(2,7)5(8,12-3)6(9,10)11/h...
+...            ...                                                ...
+9995  02a9c3a77a10  InChI=1S/C66H128O6/c1-4-7-10-13-16-19-22-25-28...
+9996  0612526bfab7  InChI=1S/C64H125NO3/c1-3-5-7-9-11-13-15-17-19-...
+9997  0571eeacc8e7  InChI=1S/C75H145NO5/c1-3-5-7-9-11-13-15-17-19-...
+9998  037bc84997c6  InChI=1S/C58H109NO5/c1-3-5-7-9-11-13-15-17-19-...
+9999  00fb3cb11db8  InChI=1S/C63H112O6/c1-4-7-10-13-16-19-22-25-28...
+
+[10000 rows x 2 columns]
+
+lb_score  = 1.890700
+is_norm_ichi = False
+
+
+--- [START 2021-04-10_07-31-28] ----------------------------------------------------------------
+
+is_norm_ichi = False
+
+mode : local
+valid_dataset : 
+	len = 10000
+	df  = (10000, 9)
+
+time  0 hr 02 min 
+submit_dir : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/valid/local-00266000_model-gpu0
+initial_checkpoint : /root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold3/checkpoint/00266000_model.pth
+df_submit : (10000, 2)
+          image_id                                              InChI
+0     05fe5fc5e7b4             InChI=1S/C2Cl6NP/c3-1(4)2(5)9-10(6,7)8
+1     02f2dcc8021a         InChI=1S/C4HCl5O/c5-1(3(7)8)2(6)4(9)10/h2H
+2     05ddaf60906d  InChI=1S/C8HN5/c9-1-6(2-10)8(5-13)7(3-11)4-12/h7H
+3     05bbe3624e35  InChI=1S/C4H6Br3OP/c1-3(9(6)7)4(5)8-2/h1-2H3/b...
+4     0413141b9e46  InChI=1S/C6H9F5O/c1-4(2,7)5(8,12-3)6(9,10)11/h...
+...            ...                                                ...
+9995  02a9c3a77a10  InChI=1S/C66H128O6/c1-4-7-10-13-16-19-22-25-28...
+9996  0612526bfab7  InChI=1S/C62H121NO3/c1-3-5-7-9-11-13-15-17-19-...
+9997  0571eeacc8e7  InChI=1S/C72H141NO5/c1-3-5-7-9-11-13-15-17-19-...
+9998  037bc84997c6  InChI=1S/C56H105NO4/c1-3-5-7-9-11-13-15-17-19-...
+9999  00fb3cb11db8  InChI=1S/C63H112O6/c1-4-7-10-13-16-19-22-25-28...
+
+[10000 rows x 2 columns]
+
+lb_score  = 1.953700
+is_norm_ichi = False
+ 

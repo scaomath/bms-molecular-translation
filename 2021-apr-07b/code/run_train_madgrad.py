@@ -1,10 +1,5 @@
-#%%
 import os
-import sys
-current_path = os.path.dirname(os.path.abspath(__file__))
-HOME = os.path.dirname(current_path)
-sys.path.append(HOME)
-sys.path.append(current_path)
+
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 from common import *
@@ -12,25 +7,18 @@ from bms import *
 
 from lib.net.lookahead import *
 from lib.net.radam import *
-try:
-    from dataset_patch import *
-    from fairseq_model import *
-except:
-    from .dataset_patch import *
-    from .fairseq_model import *
+from lib.net.madgrad import *
+
+from dataset_224 import *
+from fairseq_model import *
+from run_check_fairseq_model import convert_state_dict_to_fairseq
 
 # ----------------
 is_mixed_precision = True #False  #
 
-#%%
+
 ###################################################################################################
 import torch.cuda.amp as amp
-
-def get_num_params(model):
-    model_parameters = filter(lambda p: p.requires_grad, model.parameters())
-    params = sum([np.prod(p.size()) for p in model_parameters])
-    return params
-
 if is_mixed_precision:
     class AmpNet(Net):
         @torch.cuda.amp.autocast()
@@ -40,7 +28,7 @@ else:
     AmpNet = Net
 
 
-#%%
+
 
 ###################################################################################################
 
@@ -55,17 +43,12 @@ def do_valid(net, tokenizer, valid_loader):
     start_timer = timer()
     for t, batch in enumerate(valid_loader):
         batch_size = len(batch['index'])
-        length = batch['length']
+        image  = batch['image' ].cuda()
         token  = batch['token' ].cuda()
-        token_pad_mask = batch['token_pad_mask' ].cuda()
-        #image  = batch['image' ].cuda()
-        num_patch = batch['num_patch']
-        patch  = batch['patch' ].cuda()
-        coord  = batch['coord' ].cuda()
-        patch_pad_mask  = batch['patch_pad_mask' ].cuda()
+        length = batch['length']
 
         with torch.no_grad():
-            logit = data_parallel(net, (patch, coord, token, patch_pad_mask, token_pad_mask)) #net(image, token, length)
+            logit = net(image, token, length)
             probability = F.softmax(logit,-1)
 
         valid_num += batch_size
@@ -96,11 +79,11 @@ def do_valid(net, tokenizer, valid_loader):
     lb_score = 0
     if 1:
         score = []
-        for i,(p, t) in enumerate(zip(predict, truth)):
-            t = truth[i][1:length[i]-1]
-            p = predict[i][1:length[i]-1]
-            t = tokenizer.one_predict_to_inchi(t)
-            p = tokenizer.one_predict_to_inchi(p)
+        for p, t in zip(predict, truth):
+            t = truth[1][1:length[1]-1]
+            p = predict[1][1:length[1]-1]
+            t = tokenizer.one_sequence_to_text(t)
+            p = tokenizer.one_sequence_to_text(p)
             s = Levenshtein.distance(p, t)
             score.append(s)
         lb_score = np.mean(score)
@@ -110,16 +93,15 @@ def do_valid(net, tokenizer, valid_loader):
 
 
 def run_train():
-
     fold = 3
     out_dir = \
-        '/home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
+        '/root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold%d' % fold
     initial_checkpoint = \
-      out_dir + '/checkpoint/00922000_model.pth'#None #
-       #'/root/share1/kaggle/2021/bms-moleular-translation/result/try22/tnt-patch1/fold3/checkpoint/00697000_model.pth'
+        out_dir + '/checkpoint/00235000_model.pth'#
+        #'/root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224/fold3/checkpoint/00235000_model.pth'
 
     debug = 0
-    start_lr = 0.00001# 1
+    start_lr = 0.00005# 1
     batch_size = 32   # 24
 
 
@@ -138,8 +120,6 @@ def run_train():
     ## dataset ------------------------------------
 
     df_train, df_valid = make_fold('train-%d' % fold)
-    df_valid = df_valid.iloc[:5_000]
-
 
     tokenizer = load_tokenizer()
     train_dataset = BmsDataset(df_train,tokenizer)
@@ -148,21 +128,19 @@ def run_train():
     train_loader = DataLoader(
         train_dataset,
         sampler = RandomSampler(train_dataset),
-        #sampler=UniformLengthSampler(train_dataset, is_shuffle=True), #200_000
         batch_size=batch_size,
         drop_last=True,
         num_workers=8,
         pin_memory=True,
-        worker_init_fn=lambda id: np.random.seed(torch.initial_seed() // 2 ** 32 + id),
         collate_fn=null_collate,
     )
     valid_loader = DataLoader(
         valid_dataset,
-        #sampler=UniformLengthSampler(valid_dataset, 5_000),
-        sampler=SequentialSampler(valid_dataset),
+        #sampler=SequentialSampler(valid_dataset),
+        sampler=FixNumSampler(valid_dataset, 5_000), #200_000
         batch_size=32,
         drop_last=False,
-        num_workers=8,
+        num_workers=4,
         pin_memory=True,
         collate_fn=null_collate,
     )
@@ -173,9 +151,11 @@ def run_train():
 
     ## net ----------------------------------------
     log.write('** net setting **\n')
-    scaler = amp.GradScaler()
-    net = AmpNet().cuda()
-    print(f"Total params: {get_num_params(net)}")
+    if is_mixed_precision:
+        scaler = amp.GradScaler()
+        net = AmpNet().cuda()
+    else:
+        net = Net().cuda()
 
     if initial_checkpoint is not None:
         f = torch.load(initial_checkpoint, map_location=lambda storage, loc: storage)
@@ -183,14 +163,7 @@ def run_train():
         start_epoch     = f['epoch']
         state_dict = f['state_dict']
 
-        #---
-        # state_dict = {k.replace('cnn.e.','cnn.'):v for k,v in state_dict.items()}
-        # del state_dict['text_pos.pos']
-        # del state_dict['cnn.head.weight']
-        # del state_dict['cnn.head.bias']
-        # net.load_state_dict(state_dict, strict=False)
-
-        #---
+        #state_dict = convert_state_dict_to_fairseq(state_dict)
         net.load_state_dict(state_dict, strict=True)  # True
     else:
         start_iteration = 0
@@ -203,8 +176,11 @@ def run_train():
     if 0:  ##freeze
         for p in net.encoder.parameters(): p.requires_grad = False
 
-    optimizer = Lookahead(RAdam(filter(lambda p: p.requires_grad, net.parameters()), lr=start_lr), alpha=0.5, k=5)
+    # optimizer = Lookahead(RAdam(filter(lambda p: p.requires_grad, net.parameters()), lr=start_lr), alpha=0.5, k=5)
     # optimizer = RAdam(filter(lambda p: p.requires_grad, net.parameters()),lr=start_lr)
+
+    optimizer = MADGRAD(filter(lambda p: p.requires_grad, net.parameters()), lr=start_lr)
+
 
     num_iteration = 80000 * 1000
     iter_log = 1000
@@ -281,14 +257,9 @@ def run_train():
 
             # one iteration update  -------------
             batch_size = len(batch['index'])
-            length = batch['length']
+            image  = batch['image' ].cuda()
             token  = batch['token' ].cuda()
-            token_pad_mask = batch['token_pad_mask' ].cuda()
-            #image  = batch['image' ].cuda()
-            num_patch = batch['num_patch']
-            patch  = batch['patch' ].cuda()
-            coord  = batch['coord' ].cuda()
-            patch_pad_mask = batch['patch_pad_mask' ].cuda()
+            length = batch['length']
 
 
             # ----
@@ -296,11 +267,12 @@ def run_train():
             optimizer.zero_grad()
 
             if is_mixed_precision:
+                # https://pytorch.org/docs/master/amp.html
+                # https://pytorch.org/docs/master/notes/amp_examples.html#amp-examples
                 with amp.autocast():
                     #assert(False)
-                    logit = data_parallel(net, (patch, coord, token, patch_pad_mask, token_pad_mask)) #net(image, token, length)
+                    logit = net(image, token, length)
                     loss0 = seq_cross_entropy_loss(logit, token, length)
-                    #loss0 = seq_anti_focal_cross_entropy_loss(logit, token, length)
 
                 scaler.scale(loss0).backward()
                 #scaler.unscale_(optimizer)
