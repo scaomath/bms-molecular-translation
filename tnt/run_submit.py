@@ -1,4 +1,10 @@
+#%%
 import os
+import sys
+current_path = os.path.dirname(os.path.abspath(__file__))
+HOME = os.path.dirname(current_path)
+sys.path.append(HOME)
+sys.path.append(current_path)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
@@ -9,13 +15,26 @@ from lib.net.lookahead import *
 from lib.net.radam import *
 
 # from dataset_224 import *
-from dataset_patch import *
-from fairseq_model import *
+try:
+    from .dataset_patch import *
+    from .fairseq_model import *
+except:
+    from dataset_patch import *
+    from fairseq_model import *
 
-
+#%%
 # ----------------
 is_mixed_precision = True #False  #
+STOI = {
+    '<sos>': 190,
+    '<eos>': 191,
+    '<pad>': 192,
+}
 
+
+image_size = 224
+vocab_size = 193
+max_length = 300 #275
 
 ###################################################################################################
 import torch.cuda.amp as amp
@@ -100,10 +119,14 @@ def run_submit():
 
 
     fold = 3
+    # out_dir = \
+    #     '/root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold%d' % fold
+    # initial_checkpoint = \
+    #     out_dir + '/checkpoint/00266000_model.pth'#
     out_dir = \
-        '/root/share1/kaggle/2021/bms-moleular-translation/result/try10/tnt-s-224-fairseq/fold%d' % fold
+        '/home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
     initial_checkpoint = \
-        out_dir + '/checkpoint/00266000_model.pth'#
+      out_dir + '/checkpoint/00922000_model.pth'
 
     is_norm_ichi = False #True
     if 1:
@@ -207,7 +230,8 @@ def run_submit():
         exit(0)
 
 
-def cat_submit():
+def cat_submit(): 
+    # un-used
     df =[]
     for i in [3,2,1,0]:
         file=\

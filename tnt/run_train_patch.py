@@ -115,7 +115,7 @@ def run_train():
     out_dir = \
         '/home/scao/Documents/bms-molecular-translation/result/try22/tnt-patch1-s0.8/fold%d' % fold
     initial_checkpoint = \
-      out_dir + '/checkpoint/00922000_model.pth'#None #
+      out_dir + '/checkpoint/00922000_model.pth' 
        #'/root/share1/kaggle/2021/bms-moleular-translation/result/try22/tnt-patch1/fold3/checkpoint/00697000_model.pth'
 
     debug = 0
